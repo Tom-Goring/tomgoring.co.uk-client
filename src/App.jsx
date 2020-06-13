@@ -1,3 +1,4 @@
+import React from "react";
 import { Avatar } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -19,7 +20,6 @@ import InfoIcon from "@material-ui/icons/Info";
 import MenuIcon from "@material-ui/icons/Menu";
 import TimelineIcon from "@material-ui/icons/Timeline";
 import clsx from "clsx";
-import React from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router, Link as RouterLink, Route } from "react-router-dom";
 import "./App.css";
@@ -164,6 +164,7 @@ function App() {
               [classes.contentShift]: open,
             })}>
             <div className={classes.appHeader} />
+            <div>New version deployed!</div>
             <Route exact path="/todo-list" component={Todo} />
           </main>
         </div>
