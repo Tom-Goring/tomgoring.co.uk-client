@@ -164,7 +164,6 @@ function App() {
               [classes.contentShift]: open,
             })}>
             <div className={classes.appHeader} />
-            <div>New version deployed!</div>
             <Route exact path="/todo-list" component={Todo} />
           </main>
         </div>

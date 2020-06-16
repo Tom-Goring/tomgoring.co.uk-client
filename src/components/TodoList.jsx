@@ -25,8 +25,6 @@ const TodoList = (props) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
-  console.log("Loading todo list");
-
   const dispatch = useDispatch();
 
   React.useEffect(() => {
