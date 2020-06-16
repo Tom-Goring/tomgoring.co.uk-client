@@ -4,7 +4,7 @@ import { GET_TODOS, ADD_TODO, DELETE_TODO, UPDATE_TODO, TODOS_LOADING } from "./
 export const getTodos = () => (dispatch) => {
   dispatch(setTodosLoading());
   axios
-    .get("api.tomgoring.co.uk/todos", {
+    .get("https://api.tomgoring.co.uk/todos", {
       headers: { "Access-Control-Allow-Origin": "*" },
     })
     .then((res) => {
@@ -18,7 +18,7 @@ export const getTodos = () => (dispatch) => {
 export const addTodo = (description) => {
   return (dispatch) => {
     return axios
-      .post("www.tomgoring.co.uk/todo", { description: description, done: 0 })
+      .post("https://api.tomgoring.co.uk/todo", { description: description, done: 0 })
       .then((res) => {
         dispatch({
           type: ADD_TODO,
@@ -30,7 +30,7 @@ export const addTodo = (description) => {
 
 export const deleteTodo = (id) => {
   return (dispatch) => {
-    axios.delete(`www.tomgoring.co.uk/todo/${id}`).then((res) => {
+    axios.delete(`https://api.tomgoring.co.uk/todo/${id}`).then((res) => {
       dispatch({ type: DELETE_TODO, payload: id });
     });
   };
