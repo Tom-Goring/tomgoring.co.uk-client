@@ -1,31 +1,26 @@
 import React from "react";
-import { Avatar } from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Divider from "@material-ui/core/Divider";
-import Drawer from "@material-ui/core/Drawer";
-import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import { makeStyles } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import AssignmentIcon from "@material-ui/icons/Assignment";
-import DescriptionIcon from "@material-ui/icons/Description";
-import DoneIcon from "@material-ui/icons/Done";
-import HomeIcon from "@material-ui/icons/Home";
-import InfoIcon from "@material-ui/icons/Info";
-import MenuIcon from "@material-ui/icons/Menu";
-import TimelineIcon from "@material-ui/icons/Timeline";
 import clsx from "clsx";
+import { makeStyles } from "@material-ui/core/styles";
 import { Provider } from "react-redux";
-import { BrowserRouter as Router, Link as RouterLink, Route } from "react-router-dom";
-import "./App.css";
-import avatar from "./me.jpg";
-import Todo from "./pages/Todo";
 import store from "./store";
+import { BrowserRouter as Router } from "react-router-dom";
+import {
+  CssBaseline,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Divider,
+  useTheme,
+} from "@material-ui/core";
+import MenuIcon from "@material-ui/icons/Menu";
+import InboxIcon from "@material-ui/icons/Menu";
+import MailIcon from "@material-ui/icons/Menu";
 
 const drawerWidth = 240;
 
@@ -36,24 +31,8 @@ const useStyles = makeStyles((theme) => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
   },
-  appHeader: {
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
   drawer: {
     width: drawerWidth,
-    flexShrink: 0,
-  },
-  drawerHeader: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    padding: theme.spacing(2, 1, 1.5, 1),
   },
   drawerPaper: {
     width: drawerWidth,
@@ -61,115 +40,128 @@ const useStyles = makeStyles((theme) => ({
   drawerContainer: {
     overflow: "auto",
   },
+  toolbar: theme.mixins.toolbar,
+  toolbarIcon: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: "0 8px",
+    ...theme.mixins.toolbar,
+  },
+  menuButton: {
+    marginRight: 36,
+  },
+  title: {
+    flexGrow: 1,
+  },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
+    height: "100vh",
+    overflow: "auto",
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: -(drawerWidth * 1.1),
+    marginLeft: 0,
   },
   contentShift: {
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    marginLeft: 0,
+    marginLeft: drawerWidth,
   },
-  avatar: {
-    height: theme.spacing(10),
-    width: theme.spacing(10),
+  container: {
+    paddingTop: theme.spacing(4),
+    paddingBotton: theme.spacing(4),
+  },
+  paper: {
+    padding: theme.spacing(2),
+    display: "flex",
+    overflow: "auto",
+    flexDirection: "column",
+  },
+  fixedHeight: {
+    height: 240,
   },
 }));
 
-function ListItemLink(props) {
-  const { icon, primary, to } = props;
-
-  const renderLink = React.useMemo(
-    () => React.forwardRef((itemProps, ref) => <RouterLink to={to} ref={ref} {...itemProps} />),
-    [to]
-  );
-
-  return (
-    <li>
-      <ListItem button component={renderLink}>
-        {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-        <ListItemText primary={primary} />
-      </ListItem>
-    </li>
-  );
-}
-
-function App() {
+export default function App() {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(true);
 
-  const toggleDrawer = () => {
+  const toggleOpen = () => {
     setOpen(!open);
   };
 
   return (
     <Provider store={store}>
+      <CssBaseline />
       <Router>
-        <div className={classes.root}>
-          <CssBaseline />
-          <AppBar position="fixed" className={classes.appBar}>
-            <Toolbar>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={toggleDrawer}
-                edge="start"
-                className={classes.menuButton}>
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" noWrap>
-                Tom Goring
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          <Drawer
-            className={classes.drawer}
-            variant="persistent"
-            open={open}
-            classes={{
-              paper: classes.drawerPaper,
-            }}>
-            <Toolbar />
-            <div className={classes.drawerContainer}>
-              <div className={classes.drawerHeader}>
-                <Avatar className={classes.avatar} alt="Tom Goring" src={avatar}></Avatar>
-                <Typography variant="h5">Tom Goring</Typography>
-                <Typography variant="caption">mail@tomgoring.co.uk</Typography>
-              </div>
-              <Divider />
-              {/* TODO: Add links to actual pages */}
-              <List>
-                <ListItemLink to="/" primary="Home" icon={<HomeIcon />} />
-                <ListItemLink to="/about-me" primary="About Me" icon={<InfoIcon />} />
-                <ListItemLink to="/timeline" primary="Timeline" icon={<TimelineIcon />} />
-                <ListItemLink to="/cv" primary="CV" icon={<DescriptionIcon />} />
-              </List>
-              <Divider />
-              <List>
-                <ListItemLink to="/todo-list" primary="My todo-list" icon={<DoneIcon />} />
-                <ListItemLink to="/projects" primary="My Projects" icon={<AssignmentIcon />} />
-              </List>
-            </div>
-          </Drawer>
-          <Toolbar />
+        <AppBar position="absolute" className={classes.appBar}>
+          <Toolbar className={classes.toolbar}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={toggleOpen}
+              className={clsx(classes.menuButton)}>
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              component="h1"
+              variant="h6"
+              color="inherit"
+              noWrap
+              className={classes.title}>
+              Tom Goring
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          className={classes.drawer}
+          variant="persistent"
+          classes={{ paper: classes.drawerPaper }}
+          open={open}>
+          <div className={classes.toolbar} />
+          <div>
+            <List>
+              {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
+                <ListItem button key={text}>
+                  <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItem>
+              ))}
+            </List>
+            <Divider />
+            <List>
+              {["All mail", "Trash", "Spam"].map((text, index) => (
+                <ListItem button key={text}>
+                  <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItem>
+              ))}
+            </List>
+          </div>
+        </Drawer>
+        <div
+          className={clsx(classes.content, { [classes.contentShift]: open })}
+          style={{
+            backgroundImage: "url(https://source.unsplash.com/1920x1080/daily?code)",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+          }}>
+          <div className={classes.toolbar} />
           <main
-            className={clsx(classes.content, {
-              [classes.contentShift]: open,
-            })}>
-            <div className={classes.appHeader} />
-            <Route exact path="/todo-list" component={Todo} />
-          </main>
+            style={{
+              height: `calc(100% - ${theme.mixins.toolbar.minHeight})`,
+              width: "100%",
+              overflow: "auto",
+            }}></main>
         </div>
       </Router>
     </Provider>
   );
 }
-
-export default App;
