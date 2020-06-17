@@ -1,36 +1,40 @@
 import axios from "axios";
 import { GET_TODOS, ADD_TODO, DELETE_TODO, UPDATE_TODO, TODOS_LOADING } from "./types";
 
+let url;
+
+if (process.env.NODE_ENV === "development") {
+  url = "";
+}
+if (process.env.NODE_ENV === "production") {
+  url = "https://api.tomgoring.co.uk/";
+}
+
 export const getTodos = () => (dispatch) => {
   dispatch(setTodosLoading());
-  axios
-    .get("https://api.tomgoring.co.uk/todos", {
-      headers: { "Access-Control-Allow-Origin": "*" },
-    })
-    .then((res) => {
-      dispatch({
-        type: GET_TODOS,
-        payload: res.data,
-      });
+  axios.get(`${url}/todos`).then((res) => {
+    dispatch({
+      type: GET_TODOS,
+      payload: res.data,
     });
+  });
 };
 
 export const addTodo = (description) => {
   return (dispatch) => {
-    return axios
-      .post("https://api.tomgoring.co.uk/todo", { description: description, done: 0 })
-      .then((res) => {
-        dispatch({
-          type: ADD_TODO,
-          payload: res.data,
-        });
+    console.log(`Posting ${url}/todo`);
+    return axios.post(`${url}/todo`, { description: description, done: 0 }).then((res) => {
+      dispatch({
+        type: ADD_TODO,
+        payload: res.data,
       });
+    });
   };
 };
 
 export const deleteTodo = (id) => {
   return (dispatch) => {
-    axios.delete(`https://api.tomgoring.co.uk/todo/${id}`).then((res) => {
+    axios.delete(`${url}/todo/${id}`).then((res) => {
       dispatch({ type: DELETE_TODO, payload: id });
     });
   };
