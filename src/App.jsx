@@ -1,26 +1,27 @@
 import React from "react";
-import clsx from "clsx";
-import { makeStyles } from "@material-ui/core/styles";
-import { Provider } from "react-redux";
-import store from "./store";
-import { BrowserRouter as Router } from "react-router-dom";
-import {
-  CssBaseline,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Divider,
-  useTheme,
-} from "@material-ui/core";
+import AppBar from "@material-ui/core/AppBar";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Divider from "@material-ui/core/Divider";
+import Drawer from "@material-ui/core/Drawer";
+import IconButton from "@material-ui/core/IconButton";
+import List from "@material-ui/core/List";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import AssignmentIcon from "@material-ui/icons/Assignment";
+import DescriptionIcon from "@material-ui/icons/Description";
+import DoneIcon from "@material-ui/icons/Done";
+import HomeIcon from "@material-ui/icons/Home";
+import InfoIcon from "@material-ui/icons/Info";
 import MenuIcon from "@material-ui/icons/Menu";
-import InboxIcon from "@material-ui/icons/Menu";
-import MailIcon from "@material-ui/icons/Menu";
+import TimelineIcon from "@material-ui/icons/Timeline";
+import clsx from "clsx";
+import { Provider } from "react-redux";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import ListItemLink from "./components/LinkListItem";
+import HomePage from "./pages/Home";
+import store from "./store";
+import "./App.css";
 
 const drawerWidth = 240;
 
@@ -127,39 +128,28 @@ export default function App() {
           <div className={classes.toolbar} />
           <div>
             <List>
-              {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-                <ListItem button key={text}>
-                  <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItem>
-              ))}
+              <ListItemLink to="/" primary="Home" icon={<HomeIcon />} />
+              <ListItemLink to="/about-me" primary="About Me" icon={<InfoIcon />} />
+              <ListItemLink to="/timeline" primary="Timeline" icon={<TimelineIcon />} />
+              <ListItemLink to="/cv" primary="CV" icon={<DescriptionIcon />} />
             </List>
             <Divider />
             <List>
-              {["All mail", "Trash", "Spam"].map((text, index) => (
-                <ListItem button key={text}>
-                  <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItem>
-              ))}
+              <ListItemLink to="/todo-list" primary="My todo-list" icon={<DoneIcon />} />
+              <ListItemLink to="/projects" primary="My Projects" icon={<AssignmentIcon />} />
             </List>
           </div>
         </Drawer>
-        <div
-          className={clsx(classes.content, { [classes.contentShift]: open })}
-          style={{
-            backgroundImage: "url(https://source.unsplash.com/1920x1080/daily?code)",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-          }}>
+        <div className={clsx(classes.content, { [classes.contentShift]: open })}>
           <div className={classes.toolbar} />
           <main
             style={{
-              height: `calc(100% - ${theme.mixins.toolbar.minHeight})`,
+              height: `calc(100% - ${theme.mixins.toolbar.minHeight}px)`,
               width: "100%",
               overflow: "auto",
-            }}></main>
+            }}>
+            <Route exact path="/" component={HomePage} />
+          </main>
         </div>
       </Router>
     </Provider>
