@@ -129,6 +129,26 @@ export default () => {
     setBalls(new_balls);
   };
 
+  const renderBalls = () => {
+    if (canvasRef.current) {
+      let canvas = canvasRef.current;
+      let ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, dimensions.width, dimensions.height);
+        Array.prototype.forEach.call(balls, (b: Ball) => {
+          if (!b.type) {
+            let color = `rgba(${ball_color.r},${ball_color.g},${ball_color.b},${b.alpha})`;
+            ctx!.fillStyle = color;
+            ctx?.beginPath();
+            ctx?.arc(b.x, b.y, R, 0, Math.PI * 2, true);
+            ctx?.closePath();
+            ctx?.fill();
+          }
+        });
+      }
+    }
+  };
+
   useLayoutEffect(() => {
     const updateSize = () => {
       if (targetRef.current) {
@@ -163,7 +183,13 @@ export default () => {
         width={dimensions.width}
         height={dimensions.height}
         ref={canvasRef}
-        onClick={(e) => {}}></canvas>
+        onClick={(e) => {
+          console.clear();
+          for (let index = 0; index < 50; index++) {
+            updateBalls();
+          }
+          renderBalls();
+        }}></canvas>
     </div>
   );
 };
