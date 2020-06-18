@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
 export default function App() {
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => {
     setOpen(!open);
@@ -140,7 +140,9 @@ export default function App() {
             </List>
           </div>
         </Drawer>
-        <div className={clsx(classes.content, { [classes.contentShift]: open })}>
+        <div
+          className={clsx(classes.content, { [classes.contentShift]: open })}
+          style={{ overflow: "hidden" }}>
           <div className={classes.toolbar} />
           <main
             style={{
