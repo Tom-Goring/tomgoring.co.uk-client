@@ -112,6 +112,23 @@ export default () => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [balls, setBalls] = useState<Ball[]>([]);
 
+  const updateBalls = () => {
+    let new_balls: Ball[] = [];
+    Array.prototype.forEach.call(balls, (b: Ball) => {
+      b.x += b.vx;
+      b.y += b.vy;
+
+      if (b.x > -50 && b.x < dimensions.width + 50 && b.y > -50 && b.y < dimensions.height + 50) {
+        new_balls.push(b);
+      }
+
+      b.phase += alpha_f;
+      b.alpha = Math.abs(Math.cos(b.phase));
+    });
+
+    setBalls(new_balls);
+  };
+
   useLayoutEffect(() => {
     const updateSize = () => {
       if (targetRef.current) {
@@ -135,7 +152,9 @@ export default () => {
       return new_balls.slice(0);
     };
 
-    if (dimensions.height !== 0 && dimensions.width !== 0) setBalls(initBalls(30));
+    if (dimensions.height !== 0 && dimensions.width !== 0) {
+      setBalls(initBalls(30));
+    }
   }, [dimensions]);
 
   return (
@@ -144,11 +163,7 @@ export default () => {
         width={dimensions.width}
         height={dimensions.height}
         ref={canvasRef}
-        onClick={(e) => {
-          console.log(dimensions.height);
-          console.log(dimensions.width);
-          console.log(balls);
-        }}></canvas>
+        onClick={(e) => {}}></canvas>
     </div>
   );
 };
