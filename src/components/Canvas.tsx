@@ -108,34 +108,20 @@ function genRandomBall(width: number, height: number): Ball {
 export default () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const targetRef = React.useRef<HTMLDivElement>(null);
-  const animRef = React.useRef<any>(null);
+
+  const ballRef = React.useRef<Ball[] | null>(null);
+  const dimensionRef = React.useRef<any>({ width: 0, height: 0 });
 
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [balls, setBalls] = useState<Ball[]>([]);
-
-  const updateBalls = () => {
-    let new_balls: Ball[] = [];
-    Array.prototype.forEach.call(balls, (b: Ball) => {
-      b.x += b.vx;
-      b.y += b.vy;
-
-      if (b.x > -50 && b.x < dimensions.width + 50 && b.y > -50 && b.y < dimensions.height + 50) {
-        new_balls.push(b);
-      }
-
-      b.phase += alpha_f;
-      b.alpha = Math.abs(Math.cos(b.phase));
-    });
-    return new_balls;
-  };
+  // const [balls, setBalls] = useState<Ball[]>([]);
 
   const renderBalls = () => {
-    if (canvasRef.current) {
+    if (canvasRef.current && ballRef.current) {
       let canvas = canvasRef.current;
       let ctx = canvas.getContext("2d");
       if (ctx) {
-        ctx.clearRect(0, 0, dimensions.width, dimensions.height);
-        Array.prototype.forEach.call(balls, (b: Ball) => {
+        ctx.clearRect(0, 0, dimensionRef.current.width, dimensionRef.current.height);
+        Array.prototype.forEach.call(ballRef.current, (b: Ball) => {
           if (!b.type) {
             let color = `rgba(${ball_color.r},${ball_color.g},${ball_color.b},${b.alpha})`;
             ctx!.fillStyle = color;
@@ -149,24 +135,35 @@ export default () => {
     }
   };
 
-  const topUpBalls = (min: number) => {
-    if (balls.length < min) {
-      let new_balls = balls;
-      new_balls.push(genRandomBall(dimensions.width, dimensions.height));
-      setBalls(new_balls);
+  const updateBalls = () => {
+    let new_balls: Ball[] = [];
+    if (ballRef.current) {
+      Array.prototype.forEach.call(ballRef.current, (b: Ball) => {
+        b.x += b.vx;
+        b.y += b.vy;
+
+        if (
+          b.x > -50 &&
+          b.x < dimensionRef.current.width + 50 &&
+          b.y > -50 &&
+          b.y < dimensionRef.current.height + 50
+        ) {
+          new_balls.push(b);
+        }
+
+        b.phase += alpha_f;
+        b.alpha = Math.abs(Math.cos(b.phase));
+      });
+      ballRef.current = new_balls;
     }
   };
 
-  const render = () => {
-    if (canvasRef.current) {
-      let canvas = canvasRef.current;
-      let ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.clearRect(0, 0, dimensions.width, dimensions.height);
-        renderBalls();
-        updateBalls();
-        topUpBalls(30);
-        requestAnimationFrame(render);
+  const topUpBalls = (min: number) => {
+    if (ballRef.current) {
+      if (ballRef.current.length < min) {
+        ballRef.current.push(
+          genRandomBall(dimensionRef.current.width, dimensionRef.current.height)
+        );
       }
     }
   };
@@ -174,14 +171,16 @@ export default () => {
   useLayoutEffect(() => {
     const updateSize = () => {
       if (targetRef.current) {
-        setDimensions({
+        dimensionRef.current = {
           width: targetRef.current.offsetWidth,
           height: targetRef.current.offsetHeight,
-        });
+        };
+        setDimensions(dimensionRef.current);
       }
     };
-    window.addEventListener("resize", updateSize);
     updateSize();
+    console.log(dimensionRef.current);
+    window.addEventListener("resize", updateSize);
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
@@ -189,20 +188,31 @@ export default () => {
     const initBalls = (num: number) => {
       let new_balls = [];
       for (let i = 0; i < num; i++) {
-        new_balls.push(genRandomBall(dimensions.width, dimensions.height));
+        new_balls.push(genRandomBall(dimensionRef.current.width, dimensionRef.current.height));
       }
       return new_balls.slice(0);
     };
 
-    if (dimensions.height !== 0 && dimensions.width !== 0 && balls.length === 0) {
-      console.log("Setting balls");
-      setBalls(initBalls(30));
+    if (dimensionRef.current.height !== 0 && dimensionRef.current.width !== 0) {
+      if (ballRef.current === null) ballRef.current = initBalls(30);
     }
-  }, [dimensions]);
+  }, [dimensionRef.current]);
 
   useEffect(() => {
+    const render = () => {
+      if (canvasRef.current) {
+        let canvas = canvasRef.current;
+        let ctx = canvas.getContext("2d");
+        if (ctx) {
+          renderBalls();
+          updateBalls();
+          topUpBalls(20);
+          requestAnimationFrame(render);
+        }
+      }
+    };
     requestAnimationFrame(render);
-  });
+  }, []);
 
   return (
     <div ref={targetRef} style={{ width: "100%", height: "100%", backgroundColor: "#252934" }}>
