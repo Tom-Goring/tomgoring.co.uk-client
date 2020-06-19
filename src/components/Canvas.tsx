@@ -120,6 +120,17 @@ export default () => {
   const ballRef = React.useRef<Ball[] | null>(null);
   const dimensionRef = React.useRef<any>({ width: 0, height: 0 });
 
+  const mouseBall = React.useRef<Ball>({
+    x: 0,
+    y: 0,
+    vx: 0,
+    vy: 0,
+    r: 0,
+    type: "mouse",
+    alpha: 1,
+    phase: 0,
+  });
+
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   const renderBalls = () => {
@@ -148,7 +159,6 @@ export default () => {
       let ctx = canvas.getContext("2d");
       if (ctx) {
         let fraction, alpha;
-        console.log(ballRef.current);
         for (let i = 0; i < ballRef.current.length; i++) {
           for (let j = i + 1; j < ballRef.current.length - 1; j++) {
             fraction = getDisOf(ballRef.current[i], ballRef.current[j]) / dis_limit;
@@ -215,7 +225,6 @@ export default () => {
       }
     };
     updateSize();
-    console.log(dimensionRef.current);
     window.addEventListener("resize", updateSize);
     return () => window.removeEventListener("resize", updateSize);
   }, []);
@@ -243,12 +252,13 @@ export default () => {
           renderBalls();
           renderLines();
           updateBalls();
-          topUpBalls(20);
+          topUpBalls(30);
           requestAnimationFrame(render);
         }
       }
     };
-    requestAnimationFrame(render);
+    let animationID = requestAnimationFrame(render);
+    return () => cancelAnimationFrame(animationID);
   }, []);
 
   return (
@@ -259,7 +269,36 @@ export default () => {
         ref={canvasRef}
         onClick={(e) => {
           console.clear();
-        }}></canvas>
+        }}
+        onMouseEnter={(e) => {
+          console.log("MouseEnter");
+          ballRef.current?.push(mouseBall.current);
+        }}
+        onMouseLeave={(e) => {
+          console.log("MouseLeave");
+          let new_balls: Ball[] = [];
+          Array.prototype.forEach.call(ballRef.current, (b: Ball) => {
+            if (!b.type) {
+              new_balls.push(b);
+            }
+            ballRef.current = new_balls;
+          });
+        }}
+        onMouseMove={(e) => {
+          let canvas = canvasRef.current;
+          if (canvas) {
+            let rect = canvas.getBoundingClientRect();
+            let scaleX = canvas.width / rect.width;
+            let scaleY = canvas.height / rect.height;
+
+            let x = (e.clientX - rect.left) * scaleX;
+            let y = (e.clientY - rect.top) * scaleY;
+
+            mouseBall.current.x = x;
+            mouseBall.current.y = y;
+          }
+        }}
+      />
     </div>
   );
 };
