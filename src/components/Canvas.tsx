@@ -1,4 +1,5 @@
 import React, { useState, useLayoutEffect, useEffect } from "react";
+import { BallotSharp, CheckBoxTwoTone } from "@material-ui/icons";
 
 const ball_color = {
     r: 102,
@@ -105,6 +106,13 @@ function genRandomBall(width: number, height: number): Ball {
   }
 }
 
+function getDisOf(b1: Ball, b2: Ball) {
+  let delta_x = Math.abs(b1.x - b2.x),
+    delta_y = Math.abs(b1.y - b2.y);
+
+  return Math.sqrt(delta_x * delta_x + delta_y * delta_y);
+}
+
 export default () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const targetRef = React.useRef<HTMLDivElement>(null);
@@ -113,7 +121,6 @@ export default () => {
   const dimensionRef = React.useRef<any>({ width: 0, height: 0 });
 
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  // const [balls, setBalls] = useState<Ball[]>([]);
 
   const renderBalls = () => {
     if (canvasRef.current && ballRef.current) {
@@ -131,6 +138,35 @@ export default () => {
             ctx?.fill();
           }
         });
+      }
+    }
+  };
+
+  const renderLines = () => {
+    if (canvasRef.current && ballRef.current) {
+      let canvas = canvasRef.current;
+      let ctx = canvas.getContext("2d");
+      if (ctx) {
+        let fraction, alpha;
+        console.log(ballRef.current);
+        for (let i = 0; i < ballRef.current.length; i++) {
+          for (let j = i + 1; j < ballRef.current.length - 1; j++) {
+            fraction = getDisOf(ballRef.current[i], ballRef.current[j]) / dis_limit;
+
+            if (fraction < 1) {
+              alpha = 1 - fraction;
+
+              ctx.strokeStyle = `rgba(150, 150, 150, ${alpha})`;
+              ctx.lineWidth = link_line_width;
+
+              ctx.beginPath();
+              ctx.moveTo(ballRef.current[i].x, ballRef.current[i].y);
+              ctx.lineTo(ballRef.current[j].x, ballRef.current[j].y);
+              ctx.stroke();
+              ctx.closePath();
+            }
+          }
+        }
       }
     }
   };
@@ -205,6 +241,7 @@ export default () => {
         let ctx = canvas.getContext("2d");
         if (ctx) {
           renderBalls();
+          renderLines();
           updateBalls();
           topUpBalls(20);
           requestAnimationFrame(render);
