@@ -108,6 +108,7 @@ function genRandomBall(width: number, height: number): Ball {
 export default () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const targetRef = React.useRef<HTMLDivElement>(null);
+  const animRef = React.useRef<any>(null);
 
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [balls, setBalls] = useState<Ball[]>([]);
@@ -125,8 +126,7 @@ export default () => {
       b.phase += alpha_f;
       b.alpha = Math.abs(Math.cos(b.phase));
     });
-
-    setBalls(new_balls);
+    return new_balls;
   };
 
   const renderBalls = () => {
@@ -145,6 +145,28 @@ export default () => {
             ctx?.fill();
           }
         });
+      }
+    }
+  };
+
+  const topUpBalls = (min: number) => {
+    if (balls.length < min) {
+      let new_balls = balls;
+      new_balls.push(genRandomBall(dimensions.width, dimensions.height));
+      setBalls(new_balls);
+    }
+  };
+
+  const render = () => {
+    if (canvasRef.current) {
+      let canvas = canvasRef.current;
+      let ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, dimensions.width, dimensions.height);
+        renderBalls();
+        updateBalls();
+        topUpBalls(30);
+        requestAnimationFrame(render);
       }
     }
   };
@@ -172,10 +194,15 @@ export default () => {
       return new_balls.slice(0);
     };
 
-    if (dimensions.height !== 0 && dimensions.width !== 0) {
+    if (dimensions.height !== 0 && dimensions.width !== 0 && balls.length === 0) {
+      console.log("Setting balls");
       setBalls(initBalls(30));
     }
   }, [dimensions]);
+
+  useEffect(() => {
+    requestAnimationFrame(render);
+  });
 
   return (
     <div ref={targetRef} style={{ width: "100%", height: "100%", backgroundColor: "#252934" }}>
@@ -185,10 +212,6 @@ export default () => {
         ref={canvasRef}
         onClick={(e) => {
           console.clear();
-          for (let index = 0; index < 50; index++) {
-            updateBalls();
-          }
-          renderBalls();
         }}></canvas>
     </div>
   );
