@@ -1,5 +1,4 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
-import { BallotSharp, CheckBoxTwoTone } from "@material-ui/icons";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 
 const ball_color = {
     r: 102,
@@ -119,6 +118,7 @@ export default () => {
 
   const ballRef = React.useRef<Ball[] | null>(null);
   const dimensionRef = React.useRef<any>({ width: 0, height: 0 });
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   const mouseBall = React.useRef<Ball>({
     x: 0,
@@ -130,8 +130,6 @@ export default () => {
     alpha: 1,
     phase: 0,
   });
-
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   const renderBalls = () => {
     if (canvasRef.current && ballRef.current) {
@@ -214,21 +212,23 @@ export default () => {
     }
   };
 
+  const updateSize = () => {
+    if (targetRef.current) {
+      dimensionRef.current = {
+        width: targetRef.current.offsetWidth,
+        height: targetRef.current.offsetHeight,
+      };
+    }
+    setDimensions({ ...dimensionRef.current });
+  };
+
   useLayoutEffect(() => {
-    const updateSize = () => {
-      if (targetRef.current) {
-        dimensionRef.current = {
-          width: targetRef.current.offsetWidth,
-          height: targetRef.current.offsetHeight,
-        };
-        setDimensions(dimensionRef.current);
-      }
-    };
     updateSize();
     window.addEventListener("resize", updateSize);
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
+  // Handle creating new balls when the dimensions change and no balls currently exist.
   useEffect(() => {
     const initBalls = (num: number) => {
       let new_balls = [];
@@ -239,9 +239,11 @@ export default () => {
     };
 
     if (dimensionRef.current.height !== 0 && dimensionRef.current.width !== 0) {
-      if (ballRef.current === null) ballRef.current = initBalls(30);
+      if (ballRef.current === null) {
+        ballRef.current = initBalls(30);
+      }
     }
-  }, [dimensionRef.current]);
+  }, [dimensions]);
 
   useEffect(() => {
     const render = () => {
@@ -262,20 +264,27 @@ export default () => {
   }, []);
 
   return (
-    <div ref={targetRef} style={{ width: "100%", height: "100%", backgroundColor: "#252934" }}>
+    <div
+      ref={targetRef}
+      style={{ width: "100%", height: "100%", backgroundColor: "#252934", overflow: "hidden" }}>
       <canvas
         width={dimensions.width}
         height={dimensions.height}
         ref={canvasRef}
         onClick={(e) => {
-          console.clear();
+          let width = canvasRef.current?.parentElement?.offsetWidth;
+          let height = canvasRef.current?.parentElement?.offsetHeight;
+          if (height && width) {
+            let y = height;
+            let x = width;
+            dimensionRef.current = { width: x, height: y };
+            setDimensions({ width: x, height: y });
+          }
         }}
         onMouseEnter={(e) => {
-          console.log("MouseEnter");
           ballRef.current?.push(mouseBall.current);
         }}
         onMouseLeave={(e) => {
-          console.log("MouseLeave");
           let new_balls: Ball[] = [];
           Array.prototype.forEach.call(ballRef.current, (b: Ball) => {
             if (!b.type) {
