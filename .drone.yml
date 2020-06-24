@@ -18,12 +18,24 @@ steps:
     when:
       branch:
         - master
+      event:
+        - push
 
   - name: "Test Build"
     image: banzaicloud/drone-kaniko:0.5.1
     when:
       branch:
         - devel
+      event:
+        - push
+
+  - name: "Test PR"
+    image: banzaicloud/drone-kaniko:0.5.1
+    when:
+      branch:
+        - master
+      event:
+        - pull_request
 
   - name: "Deploy"
     image: sinlead/drone-kubectl
@@ -35,6 +47,8 @@ steps:
     when:
       branch:
         - master
+      event:
+        - push
 
 image_pull_secrets:
   - registry-auth-json
