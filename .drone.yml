@@ -15,6 +15,16 @@ steps:
         from_secret: docker_username
       password:
         from_secret: docker_password
+    when:
+      branch:
+        - master
+
+  - name: "Test Build"
+    image: banzaicloud/drone-kaniko:0.5.1
+    when:
+      branch:
+        - devel
+
   - name: "Deploy"
     image: sinlead/drone-kubectl
     settings:
@@ -22,6 +32,9 @@ steps:
         from_secret: kube_svacct_token
     commands:
       - kubectl delete pods -l app=tgcu
+    when:
+      branch:
+        - master
 
 image_pull_secrets:
   - registry-auth-json

@@ -158,7 +158,7 @@ export default () => {
       if (ctx) {
         let fraction, alpha;
         for (let i = 0; i < ballRef.current.length; i++) {
-          for (let j = i + 1; j < ballRef.current.length - 1; j++) {
+          for (let j = i; j < ballRef.current.length; j++) {
             fraction = getDisOf(ballRef.current[i], ballRef.current[j]) / dis_limit;
 
             if (fraction < 1) {
