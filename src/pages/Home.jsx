@@ -64,7 +64,7 @@ export default (props) => {
   return (
     <div className="home">
       <Section
-        className="landing"
+        id="landing"
         style={{
           display: "flex",
           alignItems: "center",
@@ -78,13 +78,23 @@ export default (props) => {
             <br />
             <span>Software Engineer Intern</span>
             <br />
-            <Button style={{ pointerEvents: "all" }}>
+            <Button
+              style={{ pointerEvents: "all" }}
+              onClick={() => {
+                let el = document.getElementById("about");
+                if (el) window.scrollTo(0, el.offsetTop);
+              }}>
               <span>Find out more</span>
               <FontAwesomeIcon icon={faArrowRight} />
             </Button>
           </Text>
         </FlexBox>
       </Section>
+      <Section id="about"></Section>
+      <Section id="skills"></Section>
+      <Section id="timeline"></Section>
+      <Section id="projects"></Section>
+      <Section id="contact"></Section>
     </div>
   );
 };
