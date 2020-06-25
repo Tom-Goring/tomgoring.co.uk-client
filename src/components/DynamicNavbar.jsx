@@ -21,14 +21,10 @@ const NavbarContent = (props) => {
 export const DynamicNavbar = (props) => {
   const [fixed, setFixed] = React.useState(false);
 
-  let currentScrollY = window.scrollY;
-
-  const updateScrollPos = () => {
-    currentScrollY = window.scrollY;
-    setFixed(currentScrollY > window.innerHeight);
-  };
-
   React.useEffect(() => {
+    const updateScrollPos = () => {
+      setFixed(window.scrollY > window.innerHeight);
+    };
     window.scrollTo(0, 0);
     window.addEventListener("scroll", updateScrollPos);
 

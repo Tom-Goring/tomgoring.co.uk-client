@@ -3,6 +3,8 @@ import { Provider } from "react-redux";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import store from "./store";
 import "./App.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 import HomePage from "./pages/Home";
 
@@ -14,10 +16,13 @@ export default function App() {
       <Router>
         <Switch>
           <DynamicNavRoute exact path="/" dynamic>
-            <HomePage />
+            <HomePage className="home" />
           </DynamicNavRoute>
           <DynamicNavRoute exact path="/foo">
-            <div style={{ height: "500vh", paddingTop: "5rem" }}>Foo</div>
+            <div style={{ height: "500vh", paddingTop: "5rem" }}>
+              Foo
+              <FontAwesomeIcon icon={faArrowRight} />
+            </div>
           </DynamicNavRoute>
           <Route exact path="/bar">
             <div>Bar</div>

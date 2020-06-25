@@ -1,7 +1,20 @@
+:root {
+  --dark-background: #252934;
+  --darker-background: #1b242f;
+  --light-background: #ffffff;
+  --highlight-color: #db1c52;
+  --element-color: #66b2ff;
+  --transparent-gray: rgba(255, 255, 255, 0.3);
+  --offwhite-background: #dbdbdb;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Lato", sans-serif;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
-    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

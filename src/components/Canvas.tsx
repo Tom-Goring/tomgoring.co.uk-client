@@ -266,21 +266,19 @@ export default () => {
   return (
     <div
       ref={targetRef}
-      style={{ width: "100%", height: "100%", backgroundColor: "#252934", overflow: "hidden" }}>
+      style={{
+        position: "absolute",
+        width: "100%",
+        height: "100%",
+        backgroundColor: "var(--dark-background)",
+        overflow: "hidden",
+        zIndex: 1,
+      }}>
       <canvas
+        style={{ pointerEvents: "auto" }}
         width={dimensions.width}
         height={dimensions.height}
         ref={canvasRef}
-        onClick={(e) => {
-          let width = canvasRef.current?.parentElement?.offsetWidth;
-          let height = canvasRef.current?.parentElement?.offsetHeight;
-          if (height && width) {
-            let y = height;
-            let x = width;
-            dimensionRef.current = { width: x, height: y };
-            setDimensions({ width: x, height: y });
-          }
-        }}
         onMouseEnter={(e) => {
           ballRef.current?.push(mouseBall.current);
         }}
